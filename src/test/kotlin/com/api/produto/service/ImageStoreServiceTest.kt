@@ -2,6 +2,7 @@ package com.api.produto.service
 
 import com.api.produto.build.ProdutoBuild
 import com.api.produto.mapper.ProdutoMapper
+import com.api.produto.model.image.ImageContentProfile
 import com.api.produto.model.image.Imagem
 import com.api.produto.repository.EstoqueRepository
 import com.api.produto.repository.ImageRepository
@@ -12,6 +13,7 @@ import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
+import org.aspectj.lang.annotation.Before
 import org.hibernate.service.spi.InjectService
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.*
@@ -23,6 +25,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.boot.test.mock.mockito.MockBeans
+import org.springframework.web.bind.annotation.InitBinder
 import org.springframework.web.servlet.config.annotation.EnableWebMvc
 import java.util.*
 
@@ -55,18 +58,11 @@ class ImageStoreServiceTest {
 
     @BeforeEach
     fun setup() {
-
         imageStoreService = ImageStoreService(
                 imageRepository,
                 produtoService,
                 imageStore,
         )
-
-        imageStoreService.apply {
-            imageRepository
-            produtoService
-            imageStore
-        }
     }
 
     @Test
@@ -97,6 +93,52 @@ class ImageStoreServiceTest {
 
         assertTrue(produto.imagens == null)
         assertTrue(imageStoreService.atualizaLinkDeImagens(produto).imageOriginal == null)
+
+    }
+
+
+    @Test
+    fun `test delete imagens com lista vazia`() {
+
+        var imagem1 =  Imagem(1L,false,
+                listOf( ImageContentProfile(UUID.randomUUID().toString(), 0, "type", false),
+                        ImageContentProfile(UUID.randomUUID().toString(), 0, "type", true)))
+        var imagem2 =  Imagem(2L,false,
+                listOf( ImageContentProfile(UUID.randomUUID().toString(), 0, "type", false),
+                        ImageContentProfile(UUID.randomUUID().toString(), 0, "type", true)))
+        var imagem3 =  Imagem(3L,false,
+                listOf( ImageContentProfile(UUID.randomUUID().toString(), 0, "type", false),
+                        ImageContentProfile(UUID.randomUUID().toString(), 0, "type", true)))
+        var imagem4 =  Imagem(4L,false,
+                listOf( ImageContentProfile(UUID.randomUUID().toString(), 0, "type", false),
+                        ImageContentProfile(UUID.randomUUID().toString(), 0, "type", true)))
+
+        var produto = ProdutoBuild.produto()
+        var listImagens =  mutableListOf(imagem1, imagem2, imagem3, imagem4)
+
+        produto.imagens = listImagens
+
+        every { produtoRepository.findById(produto.codigo) } returns Optional.of(produto)
+        every { produtoRepository.save(produto) } returns produto
+
+        produto.imagens!!.forEach{
+            every { imageRepository.findById(it.id) } returns Optional.of(it)
+            every { imageRepository.deleteById(it.id) } returns Unit
+            it.profiles.forEach { result ->
+                every { imageStore.setContent(it,) }
+                every { imageStore.unsetContent(result) }
+            }
+        }
+
+        imageStoreService.deleteImage(produto.codigo, imagem1.id)
+        assertTrue(produto.imagens!!.size == 3)
+        imageStoreService.deleteImage(produto.codigo, imagem2.id)
+        assertTrue(produto.imagens!!.size == 2)
+        imageStoreService.deleteImage(produto.codigo, imagem3.id)
+        assertTrue(produto.imagens!!.size == 1)
+        imageStoreService.deleteImage(produto.codigo, imagem4.id)
+        assertTrue(produto.imagens!!.size == 0)
+
 
     }
 }
