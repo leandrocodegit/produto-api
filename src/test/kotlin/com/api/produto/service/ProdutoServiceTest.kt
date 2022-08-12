@@ -27,16 +27,10 @@ class ProdutoServiceTest {
     private lateinit var produtoService: ProdutoService
     @InjectMockKs
     private lateinit var estoqueService: EstoqueService
-    @InjectMockKs
-    private lateinit var imageStoreService: ImageStoreService
     @MockK
     private lateinit var produtoRepository: ProdutoRepository
     @MockK
     private lateinit var estoqueRepository: EstoqueRepository
-    @MockK
-    private lateinit var imageStore: ImageStore
-    @MockK
-    private lateinit var imageRepository: ImageRepository
     @MockK
     private lateinit var mapper: ProdutoMapper
     @BeforeEach
@@ -189,7 +183,7 @@ class ProdutoServiceTest {
         produtoRequest.status = false
 
         val produtoSave = produtoService.updateProduto(produtoRequest)
-        assertTrue(produtoSave.imagens?.size == 2)
+        assertTrue(produtoSave.imagens?.size == 1)
         assertTrue(produtoSave.descricao == produtoDB.descricao)
         assertTrue(produtoSave.status == produtoDB.status)
     }

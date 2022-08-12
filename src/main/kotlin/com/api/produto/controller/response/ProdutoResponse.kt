@@ -1,6 +1,12 @@
 package com.api.produto.controller.response
 
+import com.api.produto.model.Categoria
+import com.api.produto.model.Estoque
 import com.api.produto.model.image.Imagem
+import javax.persistence.CascadeType
+import javax.persistence.Column
+import javax.persistence.OneToMany
+import javax.persistence.OneToOne
 
 class ProdutoResponse(
         var codigo: String,
@@ -17,9 +23,9 @@ class ProdutoResponse(
         var gtinEmbalagem: String,
         var descricaoCurta: String,
         var descricaoComplementar: String,
-        var larguraProduto: String,
-        var alturaProduto: String,
-        var profundidadeProduto: String,
+        var largura: Int,
+        var altura: Int,
+        var profundidade: Int,
         var unidadeMedida: String,
         var dataInclusao: String,
         var dataAlteracao: String,
@@ -28,10 +34,10 @@ class ProdutoResponse(
         var classFiscal: String,
         var cest: String,
         var origem: String,
-        var idGrupoProduto: String,
+        var idgrupo: String,
         var linkExterno: String,
         var observacoes: String,
-        var grupoProduto: String,
+        var grupo: String,
         var itensPorCaixa: Int,
         var volumes: Int,
         var urlVideo: String,
@@ -45,9 +51,20 @@ class ProdutoResponse(
         var descricaoFornecedor: String,
         var codigopai: String,
         var status: Boolean,
-        var imageThumbnail: Imagem?,
-        var imagens: List<ImagemResponse>?,
-        var estoque: EstoqueResponse,
-        var categoria: CategoriaResponse,
+        var imagens: MutableList<Imagem>?,
+        var estoque: Estoque,
+        var categoria: Categoria,
 ) {
+    var imageOriginal: String? = null
+        get() {
+            if(field != null)
+                return "/api/v1/imagem/$field"
+            return ""
+        }
+    var imageThumbnail: String? = null
+        get() {
+            if(field != null)
+                return "/api/v1/imagem/$field"
+            return ""
+        }
 }

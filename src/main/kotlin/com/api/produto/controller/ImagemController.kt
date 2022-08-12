@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile
 class ImagemController(
         private val produtoService: ProdutoService,
         private val imageStoreService: ImageStoreService,
+        private val imagemRepository: ImageRepository,
         private val imageStore: ImageStore,
 ) {
 
@@ -26,15 +27,15 @@ class ImagemController(
     fun saveImagem(@PathVariable codigo: String, @RequestParam("file") file: MultipartFile) {
 
         var produto = produtoService.findProdutoByCodigo(codigo)
-        produto.imagens?.add(
-                imageStoreService.saveImage(file.inputStream, file.size, file.contentType.toString()
-                ))
-        produtoService.updateProduto(produto)
+        var imagemSave = imageStoreService.saveImage(produto, file.inputStream, file.size, file.contentType.toString())
+
+        produto.imagens?.add(imagemSave)
+        imageStoreService.atualizaLinkDeImagens(produtoService.updateProduto(produto))
     }
 
     @GetMapping("{id}")
     fun listLinkImagemOriginal(@PathVariable id: String): ResponseEntity<ByteArray> {
-        if(imageStore.getResource(id).file.exists().not())
+        if (imageStore.getResource(id).file.exists().not())
             ResponseEntity.badRequest()
         return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(imageStore.getResource(id).file.readBytes());
     }
@@ -42,16 +43,24 @@ class ImagemController(
     @DeleteMapping("delete/{codigo}/{id}")
     fun deleteImagem(@PathVariable codigo: String, @PathVariable id: Long) {
 
-        var produto = produtoService.findProdutoByCodigo(codigo)
-                if(produto.imagens?.isEmpty() == true)
-                    throw EntityResponseException("Produto nãom possui imagens", CodeError.REST_ERROR)
+        imageStoreService.deleteImage(codigo, id)
 
-        produto.imagens?.filter { it.id == id }?.first()?.profiles?.forEach {
-            try {
-                imageStore.unsetContent(it)
-            } catch (ex: Exception) {
-                ResponseEntity.badRequest()
-            }
-        }
+//        if (produto.imagens?.map { it.id }?.toList()?.any { result ->
+//                    result == id
+//                } == true)
+
+
+
+//        if (produto.imagens?.isEmpty() == true)
+//            throw EntityResponseException("Produto nãom possui imagens", CodeError.REST_ERROR)
+//
+//        var imagem = produto.imagens?.filter { it.id == id }?.first()?.profiles?.forEach {
+//            try {
+//                imageStore.unsetContent(it)
+//            } catch (ex: Exception) {
+//                ResponseEntity.badRequest()
+//            }
+//        }
+
     }
 }

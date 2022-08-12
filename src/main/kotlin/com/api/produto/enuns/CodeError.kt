@@ -13,6 +13,9 @@ enum class CodeError (var value: String) {
     STOCK_ERROR("010"),
     AGE_ACCEPT("011"),
     ACTIVE_RESPONSE("012"),
-    SALDO_ERROR("013")
+    SALDO_ERROR("013"),
+    FILE_ERROR("014"),
+    CONTENT_INVALID("015"),
+    CONTENT_EMPTY("016")
 
 }

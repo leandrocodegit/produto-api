@@ -11,11 +11,4 @@ class ImagemResponse(
         var id: Long,
         var principal: Boolean,
         var profiles: List<ImageContentProfileResponse>
-){
-    var imageThumbnail: String? = null
-        get() {
-            if(field != null)
-                return "/api/v1/imagem/$field"
-            return ""
-    }
-}
+)

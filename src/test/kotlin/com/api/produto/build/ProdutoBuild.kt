@@ -19,84 +19,78 @@ class ProdutoBuild {
         fun produto(codigo: String, status: Boolean, deposito1: Int, deposito2: Int) = create(codigo, status, deposito1, deposito2)
 
         private fun create(codigo: String, status: Boolean, saldo1: Int, saldo2: Int): Produto {
-            return Produto(
-                    codigo,
-                    "Taça",
-                    "Jogo com 6 taças cristal",
-                    "JG",
-                    400.0,
-                    400.0,
-                    6.0,
-                    6.0,
-                    1,
-                    100,
-                    "",
-                    "",
-                    "Jogo com 6 taças cristal",
-                    "",
-                    "6",
-                    "10",
-                    "8",
-                    "MM",
-                    "",
-                    "",
-                    "Decoratem",
-                    "Bohemia",
-                    "",
-                    "",
-                    "Importado",
-                    "",
-                    "",
-                    "",
-                    "",
-                    6,
-                    0,
-                    "",
-                    "",
-                    "",
-                    12,
-                    "",
-                    "N",
-                    "",
-                    "",
-                    "",
-                    "",
-                    status,
-                    Imagem(
-                            1L,
-                            false,
-                            listOf( ImageContentProfile(0,UUID.randomUUID(), 0, "type") )
-                    ),
-                    listOf(Imagem(
-                            1L,
-                            false,
-                            listOf( ImageContentProfile(0,UUID.randomUUID(), 0, "type") )
-                    ),
-                            Imagem(
-                                    2L,
-                                    false,
-                                    listOf( ImageContentProfile(0,UUID.randomUUID(), 0, "type") )
-                            )),
-                    Estoque(1L,
-                            saldo1 + saldo2,
-                            listOf(
-                            Deposito(
-                                    1L,
-                                    "Local",
-                                    saldo1,
-                                    Local( "CD")
-                            ),
-                            Deposito(
-                                    2L,
-                                    "Local",
-                                    saldo2,
-                                    Local( "CD")
-                            )),0),
-                    Categoria(
-                            1L,
-                            "Taças"
-                    )
-            )
+                return Produto(
+                        codigo,
+                        "Taça",
+                        "Jogo com 6 taças cristal",
+                        "JG",
+                        400.0,
+                        400.0,
+                        6.0,
+                        6.0,
+                        1,
+                        100,
+                        "",
+                        "",
+                        "Jogo com 6 taças cristal",
+                        "",
+                        6,
+                        10,
+                        8,
+                        "MM",
+                        "",
+                        "",
+                        "Decoratem",
+                        "Bohemia",
+                        "",
+                        "",
+                        "Importado",
+                        "",
+                        "",
+                        "",
+                        "",
+                        6,
+                        0,
+                        "",
+                        "",
+                        "",
+                        12,
+                        "",
+                        "N",
+                        "",
+                        "",
+                        "",
+                        "",
+                        status,
+                        null,
+                        null,
+                        mutableListOf(Imagem(
+                                1L,
+                                false,
+                                listOf( ImageContentProfile(UUID.randomUUID().toString(), 0, "type", false),
+                                        ImageContentProfile(UUID.randomUUID().toString(), 0, "type", true))
+                        )),
+
+                        Estoque(1L,
+                                saldo1 + saldo2,
+                                listOf(
+                                        Deposito(
+                                                1L,
+                                                "Local",
+                                                saldo1,
+                                                Local( "CD")
+                                        ),
+                                        Deposito(
+                                                2L,
+                                                "Local",
+                                                saldo2,
+                                                Local( "CD")
+                                        )),0),
+                        Categoria(
+                                1L,
+                                "Taças"
+                        )
+                )
         }
 
          fun createRequest(codigo: String): ProdutoRequest {
@@ -115,9 +109,9 @@ class ProdutoBuild {
                     "",
                     "Jogo com 6 taças cristal",
                     "",
-                    "6",
-                    "10",
-                    "8",
+                    6,
+                    10,
+                    8,
                     "MM",
                     "",
                     "",

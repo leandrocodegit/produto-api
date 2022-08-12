@@ -62,7 +62,7 @@ class ProdutoMapperTest() {
 
         assertTrue(produtoEntity.descricao == produtoRequest.descricao)
         assertTrue(produtoRequest.codigo == produtoEntity.codigo)
-        assertTrue(produtoEntity.imagens?.size == 2)
+        assertTrue(produtoEntity.imagens?.size == 1)
 
         produtoRequest.descricao = "descrição alterada"
         produtoEntity = mapper.toUpdateProduto(produtoRequest, produto)

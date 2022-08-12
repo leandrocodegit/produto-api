@@ -19,7 +19,6 @@ import java.util.*
 class ProdutoService(
         private val produtoRepository: ProdutoRepository,
         private val estoqueService: EstoqueService,
-        private val imageStoreService: ImageStoreService,
         private val mapper: ProdutoMapper
 ) {
 
@@ -60,7 +59,7 @@ class ProdutoService(
                 0,
                 false,
                 mutableListOf( ImageContentProfile(UUID.randomUUID().toString(), 0, "type",false) )
-        ,"")
+         )
       //  produroDB.imagens = produroDB.imagens.apply { imageStoreService.saveImage(imagem, file.inputStream, "png") }
         return produroDB
     }
@@ -105,9 +104,6 @@ class ProdutoService(
         if (imagem == null)
             throw EntityResponseException("Imagem não encontrada", CodeError.NOT_FOUND)
       return  produtoRepository.save(produtoDB)
-    }
-    fun deleteImage(id: Long){
-        imageStoreService.deleteImage(id)
     }
 
 

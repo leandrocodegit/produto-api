@@ -34,9 +34,9 @@ class ProdutoBuildProd {
                     "",
                     "Jogo com 6 taças cristal",
                     "",
-                    "6",
-                    "10",
-                    "8",
+                    6,
+                    10,
+                    8,
                     "MM",
                     "",
                     "",
@@ -62,16 +62,13 @@ class ProdutoBuildProd {
                     "",
                     "",
                     status,
-                    Imagem(
-                            1L,
-                            false,
-                            listOf( ImageContentProfile(UUID.randomUUID().toString(), 0, "type", false) )
-                    ,""),
+                    "",
+                    "",
                     mutableListOf(Imagem(
                             1L,
                             false,
                             listOf( ImageContentProfile(UUID.randomUUID().toString(), 0, "type", false) )
-                    ,"")),
+                    )),
 
                     Estoque(1L,
                             saldo1 + saldo2,
