@@ -12,25 +12,27 @@ import com.api.produto.repository.ImageStore
 import com.api.produto.service.ImageStoreService
 import com.api.produto.service.ProdutoService
 import org.springframework.content.commons.annotations.MimeType
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
 import java.util.*
+import kotlin.io.path.Path
 
 
 @RestController
 @RequestMapping("/api/v1/produto")
 class ProdutoController(
         private val produtoService: ProdutoService,
-        private val imageContentProfileRepository: ImageContentProfileRepository,
-        private val imageStoreService: ImageStoreService,
         private val mapper: ProdutoMapper,
-        private val imageStore: ImageStore,
-        private val imagemRepository: ImageRepository
 ) {
 
     @GetMapping("{codigo}")
     fun buscaProdutoByCodigo(@PathVariable codigo: String): ResponseEntity<ProdutoResponse> {
+        var lista:List<String> = mutableListOf()
+        lista.plus("Emento adicionado com sucesso!")
+
+        println(lista.toString())
         return ResponseEntity.ok(mapper.toResponse(produtoService.findProdutoByCodigo(codigo)))
     }
 
@@ -46,40 +48,6 @@ class ProdutoController(
     fun listAllProduto(): ResponseEntity<List<ProdutoResponse>> {
         var list = produtoService.listAllProdutos().map { mapper.toResponse(it) }.toList()
         return ResponseEntity.ok(list)
-    }
-
-    @PostMapping("/file")
-    fun saveImagem(@RequestParam("file") file: MultipartFile) {
-
-        var produto = produtoService.findProdutoByCodigo("7000")
-
-        var lista: MutableList<Imagem>? = mutableListOf()
-
-        produto.imagens?.forEach {
-            lista?.add(it)
-        }
-
-        lista?.add(imageStoreService.saveImage(file.inputStream, file.size, file.contentType.toString()))
-        produto.imagens = lista
-        produtoService.updateProduto(produto)
-    }
-
-    @DeleteMapping("/file/delete/{codigo}/{id}")
-    fun deleteImagem(@PathVariable codigo: String, @PathVariable id: Long) {
-
-        var imagem = produtoService.findProdutoByCodigo(codigo)
-                .imagens?.filter { it.id == id  }?.first()
-
-       imagem?.profiles?.forEach {
-            try {
-                imageContentProfileRepository.delete(it)
-                imageStore.unsetContent(it)
-            } catch (ex: Exception) {
-                println(ex.message)
-            }
-
-            imageStoreService.deleteImage(id)
-        }
     }
 
     @PatchMapping

@@ -59,8 +59,8 @@ class ProdutoService(
         var imagem = Imagem(
                 0,
                 false,
-                listOf( ImageContentProfile(0,UUID.randomUUID(), 0, "type") )
-        )
+                mutableListOf( ImageContentProfile(UUID.randomUUID().toString(), 0, "type",false) )
+        ,"")
       //  produroDB.imagens = produroDB.imagens.apply { imageStoreService.saveImage(imagem, file.inputStream, "png") }
         return produroDB
     }

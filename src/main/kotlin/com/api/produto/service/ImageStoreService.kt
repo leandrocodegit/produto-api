@@ -20,25 +20,24 @@ class ImageStoreService(
 ) {
     fun saveImage(file: InputStream, size:Long, type: String): Imagem {
 
-        var principal = ImageContentProfile(0,UUID.randomUUID(), size, type)
+        var principal = ImageContentProfile(UUID.randomUUID().toString(), size, type, false)
         imageStore.setContent(principal, file)
 
-        var profile = ImageContentProfile(0,UUID.randomUUID(), size, type)
+        var profile = ImageContentProfile(UUID.randomUUID().toString(), size, type, true)
         imageStore.setContent(profile, imageStore.getContent(principal))
 
         var imagem = Imagem(
                 0,
                 false,
-                listOf(principal,profile)
-        )
-       RenderImagem.createIcon(imagem)
+                listOf(principal,profile),
+                profile.contentId.toString())
+
         return  imagem
     }
     fun deleteImage(id: Long){
         var img = imageRepository.findById(id).get()
         if(img.profiles.isEmpty())
             throw EntityResponseException("Imagem com id $id não encontrado", CodeError.NOT_FOUND)
-        imageContentProfileRepository.deleteAll()
         imageRepository.delete(img)
     }
 

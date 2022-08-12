@@ -1,12 +1,17 @@
 package com.api.produto.configurations
 
+import com.api.produto.events.ImageContentEventListener
+import org.springframework.content.fs.io.FileSystemResourceLoader
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.content.fs.io.FileSystemResourceLoader
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 import java.io.File
+import kotlin.io.path.Path
+
 
 @Configuration
-class StoreConfig {
+class StoreConfig: WebMvcConfigurer{
 
     @Bean
     fun filesystemRoot(): File? {
@@ -17,10 +22,24 @@ class StoreConfig {
         }
         return null
     }
-
     @Bean
     fun fileSystemResourceLoader(): FileSystemResourceLoader? {
-        print("************************* " + filesystemRoot()?.absolutePath + "\n")
         return FileSystemResourceLoader(filesystemRoot()?.absolutePath)
+    }
+    @Bean
+    fun imageContentEventListener(): ImageContentEventListener {
+        return ImageContentEventListener()
+    }
+
+    override fun addResourceHandlers(registry: ResourceHandlerRegistry) {
+        exposeDirectory("imagens", registry)
+    }
+
+    private fun exposeDirectory(dirName: String, registry: ResourceHandlerRegistry) {
+        var dirName = Path("").toAbsolutePath().toString() + "\\imagens"
+        println("************** file:$dirName")
+         dirName = dirName.replace("\\", "/")
+        println("**************  $dirName ")
+        registry.addResourceHandler("$dirName/**").addResourceLocations("file:/$dirName")
     }
 }

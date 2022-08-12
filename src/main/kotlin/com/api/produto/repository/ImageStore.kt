@@ -5,4 +5,4 @@ import org.springframework.content.commons.repository.ContentStore
 
 import java.util.UUID
 
-interface ImageStore: ContentStore<ImageContentProfile, UUID>
+interface ImageStore: ContentStore<ImageContentProfile, String>

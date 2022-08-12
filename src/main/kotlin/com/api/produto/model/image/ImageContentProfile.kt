@@ -11,11 +11,16 @@ import javax.persistence.Id
 @Entity
 class ImageContentProfile(
         @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
-        var id: Long,
         @ContentId
-        var contentId: UUID,
+        var contentId: String,
         @ContentLength
         var contentLength: Long,
-        var contentMimeType: String
-)
+        var contentMimeType: String,
+        var isRendered: Boolean
+){
+        @Transient
+        var link: String = ""
+                get() {
+                        return "/api/v1/imagem/$contentId"
+                }
+}

@@ -65,18 +65,14 @@ class ProdutoBuildProd {
                     Imagem(
                             1L,
                             false,
-                            listOf( ImageContentProfile(0,UUID.randomUUID(), 0, "type") )
-                    ),
-                    listOf(Imagem(
+                            listOf( ImageContentProfile(UUID.randomUUID().toString(), 0, "type", false) )
+                    ,""),
+                    mutableListOf(Imagem(
                             1L,
                             false,
-                            listOf( ImageContentProfile(0,UUID.randomUUID(), 0, "type") )
-                    ),
-                            Imagem(
-                                    2L,
-                                    false,
-                                    listOf( ImageContentProfile(0,UUID.randomUUID(), 0, "type") )
-                            )),
+                            listOf( ImageContentProfile(UUID.randomUUID().toString(), 0, "type", false) )
+                    ,"")),
+
                     Estoque(1L,
                             saldo1 + saldo2,
                             listOf(

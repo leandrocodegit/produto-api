@@ -5,9 +5,9 @@ import javax.persistence.*
 import javax.validation.constraints.Null
 
 @Entity
-class Produto (
+class Produto(
         @Id
-    var codigo: String,
+        var codigo: String,
         var tipo: String,
         var descricao: String,
         var unidade: String,
@@ -49,13 +49,12 @@ class Produto (
         var descricaoFornecedor: String,
         var codigopai: String,
         var status: Boolean,
-        @Null
-    @OneToOne(cascade = [CascadeType.ALL])
-    var imageThumbnail: Imagem?,
+        @OneToOne(cascade = [CascadeType.ALL])
+        var imageThumbnail: Imagem?,
         @OneToMany(cascade = [CascadeType.ALL])
-    var imagens: List<Imagem>?,
+        var imagens: MutableList<Imagem>?,
         @OneToOne
-    var estoque: Estoque,
+        var estoque: Estoque,
         @OneToOne
-    var categoria: Categoria,
+        var categoria: Categoria,
 )

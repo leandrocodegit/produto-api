@@ -1,5 +1,6 @@
 package com.api.produto.file
 
+import com.api.produto.model.image.ImageContentProfile
 import com.api.produto.model.image.Imagem
 import java.awt.image.BufferedImage
 import java.io.File
@@ -12,10 +13,10 @@ class RenderImagem {
     companion object {
 
 
-        fun createIcon(imagem: Imagem)  {
+        fun createIcon(imagem: ImageContentProfile)  {
             try {
-                val imageFile: ImageFile = ImageFile(imagem.profiles.first().contentId, null)
-                val path = "${Path("").toAbsolutePath().toString()}/imagens/${imagem.profiles.first().contentId.toString()}"
+                val imageFile: ImageFile = ImageFile(imagem.contentId, null)
+                val path = "${Path("").toAbsolutePath().toString()}/imagens/${imagem.contentId.toString()}"
                 val file = File(path)
                 val buffer = ImageIO.read(file)
 
@@ -24,7 +25,7 @@ class RenderImagem {
                         (buffer.height / 2 / 3),
                         buffer), "PNG",
                         File(
-                        "${Path("").toAbsolutePath().toString()}/imagens/${imagem.profiles.last().contentId.toString()}"
+                        "${Path("").toAbsolutePath().toString()}/imagens/${imagem.contentId.toString()}"
                 ))
             } catch (err: Exception) {
                 null
