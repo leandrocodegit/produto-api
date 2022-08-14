@@ -44,7 +44,11 @@ class ExceptionHandlerAdvice: ResponseEntityExceptionHandler() {
                 "Formato invalido",
                 CodeError.FORMAT_INVALID.name,
                 CodeError.FORMAT_INVALID.value,
-                listOf(ex.localizedMessage)
+                listOf(
+                        ex.bindingResult.fieldError?.field.toString(),
+                        ex.bindingResult.allErrors[0].code.toString(),
+                        ex.bindingResult.allErrors[0].objectName.toString(),
+                        ex.bindingResult.allErrors[0].defaultMessage.toString())
         ))
     }
 }

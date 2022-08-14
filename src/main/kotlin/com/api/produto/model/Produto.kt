@@ -18,7 +18,7 @@ class Produto(
         @Column(name = "preco_custo")
         var precoCusto: Double,
         @Column(name = "peso_liq")
-        var pesoLiq: Double?,
+        var pesoLiq: Double,
         @Column(name = "peso_bruto")
         var pesoBruto: Double,
         @Column(name = "estoque_minimo")

@@ -8,25 +8,19 @@ import com.api.produto.repository.EstoqueRepository
 import com.api.produto.repository.ImageRepository
 import com.api.produto.repository.ImageStore
 import com.api.produto.repository.ProdutoRepository
-import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
-import org.aspectj.lang.annotation.Before
-import org.hibernate.service.spi.InjectService
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.mock.mockito.MockBean
-import org.springframework.boot.test.mock.mockito.MockBeans
-import org.springframework.web.bind.annotation.InitBinder
-import org.springframework.web.servlet.config.annotation.EnableWebMvc
+import org.springframework.mock.web.MockMultipartFile
+import org.springframework.web.multipart.MultipartFile
+import java.io.File
+import java.io.FileInputStream
 import java.util.*
 
 @ExtendWith(MockKExtension::class)
@@ -35,10 +29,9 @@ class ImageStoreServiceTest {
 
     @InjectMockKs
     private lateinit var produtoService: ProdutoService
-
     @InjectMockKs
     private lateinit var estoqueService: EstoqueService
-
+    @MockK
     private lateinit var imageStoreService: ImageStoreService
 
     @MockK
@@ -98,7 +91,10 @@ class ImageStoreServiceTest {
 
 
     @Test
-    fun `test delete imagens com lista vazia`() {
+    fun `test delete imagens`() {
+
+        val path = kotlin.io.path.Path("").toAbsolutePath()
+        val file: MultipartFile = MockMultipartFile("sacola.png", FileInputStream(File("$path/midia/sacola.png")))
 
         var imagem1 =  Imagem(1L,false,
                 listOf( ImageContentProfile(UUID.randomUUID().toString(), 0, "type", false),
@@ -125,20 +121,72 @@ class ImageStoreServiceTest {
             every { imageRepository.findById(it.id) } returns Optional.of(it)
             every { imageRepository.deleteById(it.id) } returns Unit
             it.profiles.forEach { result ->
-                every { imageStore.setContent(it,) }
-                every { imageStore.unsetContent(result) }
+                every { imageStore.setContent(result,file.inputStream) } returns result
+                every { imageStore.unsetContent(result) } returns result
             }
         }
 
         imageStoreService.deleteImage(produto.codigo, imagem1.id)
         assertTrue(produto.imagens!!.size == 3)
+        assertFalse(produto.imagens!!.any { it.id == 1L })
+        assertTrue(produto.imagens!!.any { it.id == 2L })
+        assertTrue(produto.imagens!!.any { it.id == 3L })
+        assertTrue(produto.imagens!!.any { it.id == 4L })
+
         imageStoreService.deleteImage(produto.codigo, imagem2.id)
         assertTrue(produto.imagens!!.size == 2)
+        assertFalse(produto.imagens!!.any { it.id == 1L })
+        assertFalse(produto.imagens!!.any { it.id == 2L })
+        assertTrue(produto.imagens!!.any { it.id == 3L })
+        assertTrue(produto.imagens!!.any { it.id == 4L })
+
         imageStoreService.deleteImage(produto.codigo, imagem3.id)
         assertTrue(produto.imagens!!.size == 1)
+        assertFalse(produto.imagens!!.any { it.id == 1L })
+        assertFalse(produto.imagens!!.any { it.id == 2L })
+        assertFalse(produto.imagens!!.any { it.id == 3L })
+        assertTrue(produto.imagens!!.any { it.id == 4L })
+
         imageStoreService.deleteImage(produto.codigo, imagem4.id)
         assertTrue(produto.imagens!!.size == 0)
+        assertFalse(produto.imagens!!.any { it.id == 1L })
+        assertFalse(produto.imagens!!.any { it.id == 2L })
+        assertFalse(produto.imagens!!.any { it.id == 3L })
+        assertFalse(produto.imagens!!.any { it.id == 4L })
 
+    }
+
+    @Test
+    fun `test delete file`() {
+
+        val path = kotlin.io.path.Path("").toAbsolutePath()
+        val file: MultipartFile = MockMultipartFile("sacola.png", FileInputStream(File("$path/midia/sacola.png")))
+
+        var imagem =  Imagem(1L,false,
+                listOf( ImageContentProfile(UUID.randomUUID().toString(), 0, "type", false),
+                        ImageContentProfile(UUID.randomUUID().toString(), 0, "type", true)))
+
+        var produto = ProdutoBuild.produto()
+        var listImagens =  mutableListOf(imagem)
+
+        produto.imagens = listImagens
+
+        every { produtoRepository.findById(produto.codigo) } returns Optional.of(produto)
+        every { produtoRepository.save(produto) } returns produto
+
+        produto.imagens!!.forEach{
+            every { imageRepository.findById(it.id) } returns Optional.of(it)
+            every { imageRepository.deleteById(it.id) } returns Unit
+            it.profiles.forEach { result ->
+                every { imageStore.setContent(result,file.inputStream) } returns result
+                every { imageStore.unsetContent(result) } returns result
+                every { imageStore.getResource(result.contentId) } returns file.resource
+            }
+        }
+
+        assertTrue(imageStore.getResource(imagem.profiles.first().contentId).exists())
+        imageStoreService.deleteImage(produto.codigo, imagem.id)
+        assertTrue(produto.imagens!!.size == 0)
 
     }
 }

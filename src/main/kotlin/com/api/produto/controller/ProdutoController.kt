@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
 import java.util.*
+import javax.validation.Valid
 import kotlin.io.path.Path
 
 
@@ -37,7 +38,7 @@ class ProdutoController(
     }
 
     @PostMapping
-    fun createProduto(@RequestBody produtoRequest: ProdutoRequest): ResponseEntity<ProdutoResponse> {
+    fun createProduto(@RequestBody @Valid produtoRequest: ProdutoRequest): ResponseEntity<ProdutoResponse> {
         return ResponseEntity.ok(
                 mapper.toResponse(
                         produtoService.createProduto(

@@ -15,7 +15,7 @@ class ProdutoResponse(
         var unidade: String,
         var preco: Double,
         var precoCusto: Double,
-        var pesoLiq: Double?,
+        var pesoLiq: Double,
         var pesoBruto: Double,
         var estoqueMinimo: Int,
         var estoqueMaximo: Int,

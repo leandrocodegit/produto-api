@@ -83,24 +83,17 @@ class ImageStoreService(
 
     fun deleteImage(codigo: String, id: Long) {
 
+        findImagemById(id)
         val produto = produtoService.findProdutoByCodigo(codigo)
-        var imagem = findImagemById(id)
+        var imagem = produto.imagens?.find { it.id == id }
 
         if (produto.imagens != null) {
-            produto.imagens!!.any {
-                it == imagem
-            }.let {
-                if (it) {
-                    imagem.profiles.forEach { profile ->
-                        imageStore.unsetContent(profile)
-                    }
-                    produto.imagens?.remove(imagem)
-                    imageRepository.deleteById(id)
-                    atualizaLinkDeImagens(produtoService.updateProduto(produto))
-                } else {
-                    throw EntityResponseException("Erro ao deletar arquivo", CodeError.CONTENT_INVALID)
-                }
+            imagem?.profiles?.forEach { profile ->
+                imageStore.unsetContent(profile)
             }
+            produto.imagens?.remove(imagem)
+            imageRepository.deleteById(id)
+            atualizaLinkDeImagens(produtoService.updateProduto(produto))
         } else {
             throw EntityResponseException("Erro ao deletar arquivo", CodeError.CONTENT_EMPTY)
         }

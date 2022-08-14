@@ -12,12 +12,16 @@ import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
+import org.apache.tomcat.jni.File
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
+import org.springframework.mock.web.MockMultipartFile
+import org.springframework.web.multipart.MultipartFile
 import java.util.*
+import java.io.*
 
 
 @ExtendWith(MockKExtension::class)
@@ -252,8 +256,8 @@ class ProdutoServiceTest {
 //    @Test
 //    fun `test save image produto` (){
 //
-//        val path = kotlin.io.path.Path("").toAbsolutePath()
-//        val file: MultipartFile = MockMultipartFile("template.png", FileInputStream(File(  "$path/imagens/template.png")))
+        val path = kotlin.io.path.Path("").toAbsolutePath()
+        val file: MultipartFile = MockMultipartFile("template.png", FileInputStream(File("$path/imagens/template.png")))
 //        var imagem = Imagem(
 //                0,
 //                file.originalFilename,
