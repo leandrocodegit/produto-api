@@ -89,22 +89,4 @@ class ProdutoService(
        return produtoRepository.save(produtoDB)
     }
 
-    fun defineImagemPrincipal(codigo: String, id: Long): Produto{
-       var produtoDB = findProdutoByCodigo(codigo)
-       lateinit var imagem: Imagem
-            if (produtoDB.imagens == null)
-                throw EntityResponseException("Não existe imagens cadastradas para este produto", CodeError.PARAM_INVALID)
-         produtoDB.imagens?.forEach{
-            it.principal = false
-             if (it.id == id){
-                 it.principal = true
-                  imagem = it
-             }
-        }
-        if (imagem == null)
-            throw EntityResponseException("Imagem não encontrada", CodeError.NOT_FOUND)
-      return  produtoRepository.save(produtoDB)
-    }
-
-
 }

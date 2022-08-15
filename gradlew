@@ -1,5 +1,11 @@
 #!/bin/sh
 
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'com.api.produto.ProdutoApplication'
+    }
+}
 #
 # Copyright © 2015-2021 the original authors.
 #

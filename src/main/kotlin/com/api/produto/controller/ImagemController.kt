@@ -9,6 +9,7 @@ import com.api.produto.repository.ImageRepository
 import com.api.produto.repository.ImageStore
 import com.api.produto.service.ImageStoreService
 import com.api.produto.service.ProdutoService
+import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -34,33 +35,21 @@ class ImagemController(
     }
 
     @GetMapping("{id}")
-    fun listLinkImagemOriginal(@PathVariable id: String): ResponseEntity<ByteArray> {
+    fun linkImagemOriginal(@PathVariable id: String): ResponseEntity<ByteArray> {
         if (imageStore.getResource(id).file.exists().not())
             ResponseEntity.badRequest()
         return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(imageStore.getResource(id).file.readBytes());
     }
 
     @DeleteMapping("delete/{codigo}/{id}")
+    @ResponseStatus(HttpStatus.OK)
     fun deleteImagem(@PathVariable codigo: String, @PathVariable id: Long) {
-
         imageStoreService.deleteImage(codigo, id)
+    }
 
-//        if (produto.imagens?.map { it.id }?.toList()?.any { result ->
-//                    result == id
-//                } == true)
-
-
-
-//        if (produto.imagens?.isEmpty() == true)
-//            throw EntityResponseException("Produto nãom possui imagens", CodeError.REST_ERROR)
-//
-//        var imagem = produto.imagens?.filter { it.id == id }?.first()?.profiles?.forEach {
-//            try {
-//                imageStore.unsetContent(it)
-//            } catch (ex: Exception) {
-//                ResponseEntity.badRequest()
-//            }
-//        }
-
+    @GetMapping("/icon/{codigo}/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    fun savaIconImageProduto(@PathVariable codigo: String, @PathVariable id: Long) {
+        imageStoreService.defineImagemPrincipal(codigo,id)
     }
 }

@@ -5,7 +5,7 @@ import javax.persistence.*
 import kotlin.jvm.Transient
 
 @Entity
-@Table(name = "IMAGEM")
+@Table(name = "imagem")
 class Imagem(
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -58,11 +58,4 @@ class ProdutoController(
         )))
     }
 
-    @GetMapping("/icon/{codigo}/{id}")
-    fun savaIconImageProduto(@PathVariable codigo: String, @PathVariable id: Long) {
-        produtoService.defineImagemPrincipal(
-                codigo,
-                id
-        )
-    }
 }

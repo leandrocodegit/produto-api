@@ -13,6 +13,7 @@ import com.api.produto.repository.ProdutoRepository
 import org.springframework.stereotype.Component
 import java.io.InputStream
 import java.util.*
+import java.util.function.Consumer
 
 @Component
 class ImageStoreService(
@@ -87,7 +88,7 @@ class ImageStoreService(
         val produto = produtoService.findProdutoByCodigo(codigo)
         var imagem = produto.imagens?.find { it.id == id }
 
-        if (produto.imagens != null) {
+        if (imagem != null) {
             imagem?.profiles?.forEach { profile ->
                 imageStore.unsetContent(profile)
             }
@@ -97,6 +98,31 @@ class ImageStoreService(
         } else {
             throw EntityResponseException("Erro ao deletar arquivo", CodeError.CONTENT_EMPTY)
         }
+    }
+
+    fun defineImagemPrincipal(codigo: String, id: Long): Produto{
+        var produtoDB = produtoService.findProdutoByCodigo(codigo)
+        var imagem = findImagemById(id)
+        if (produtoDB.imagens == null)
+            throw EntityResponseException("Não existe imagens cadastradas para este produto", CodeError.PARAM_INVALID)
+        produtoDB.imagens?.any { it.id == id }
+                .let { result ->
+                    if (result == true){
+                        produtoDB.imagens?.forEach(Consumer {
+                            it.principal = false
+                        })
+                        produtoDB.imagens?.find{it.id == id }.let {
+                            if(it != null) {
+                                it.principal = true
+                                atualizaLinkDeImagens(produtoService.updateProduto(produtoDB))
+                            }
+                        }
+                    }
+                    else{
+                        throw EntityResponseException("Imagem não encontrada", CodeError.NOT_FOUND)
+                    }
+                }
+        return  produtoDB
     }
 
 }

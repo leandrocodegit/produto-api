@@ -1,4 +1,4 @@
-CREATE TABLE IMAGE_CONTENT_PROFILE(
+CREATE TABLE imagem_content_profile(
 content_id VARCHAR(255) PRIMARY KEY NOT NULL,
 content_length BIGINT,
 content_mime_type VARCHAR(40) NOT NULL,

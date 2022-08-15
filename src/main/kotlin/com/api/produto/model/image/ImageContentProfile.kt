@@ -11,7 +11,7 @@ import javax.persistence.Id
 import javax.persistence.Table
 
 @Entity
-@Table(name = "IMAGE_CONTENT_PROFILE")
+@Table(name = "imagem_content_profile")
 class ImageContentProfile(
         @Id
         @ContentId

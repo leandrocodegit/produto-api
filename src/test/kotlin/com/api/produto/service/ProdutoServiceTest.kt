@@ -217,40 +217,40 @@ class ProdutoServiceTest {
         assertFalse(produtoService.mudaStatus(produto.codigo).status)
     }
 
-    @Test
-    fun `test marque uma imagem como principal`(){
-
-        var produto = ProdutoBuild.produto("6500")
-        every { produtoRepository.save(produto) } returns produto
-        every { produtoRepository.findById(produto.codigo) } returns Optional.of(produto)
-
-        var imagem = produto.imagens?.first()
-
-        if (imagem != null) {
-            produtoService.defineImagemPrincipal(produto.codigo, imagem.id)
-        }
-        imagem?.principal?.let { assertTrue(it) }
-
-        produto.imagens?.forEach { it.principal = false }
-        if (imagem != null) {
-            produtoService.defineImagemPrincipal(produto.codigo, imagem.id)
-        }
-        imagem?.principal?.let { assertTrue(it) }
-    }
-
-    @Test
-    fun `test marque uma imagem como princial com uma lista nula`(){
-
-        var produto = ProdutoBuild.produto("6500")
-        every { produtoRepository.save(produto) } returns produto
-        every { produtoRepository.findById(produto.codigo) } returns Optional.of(produto)
-
-        produto.imagens = null
-        val imagem: Imagem = ProdutoBuild.produto().imagens!!.first()
-
-        assertThrows<EntityResponseException> { produtoService.defineImagemPrincipal(produto.codigo, imagem.id) }
-
-    }
+//    @Test
+//    fun `test marque uma imagem como principal`(){
+//
+//        var produto = ProdutoBuild.produto("6500")
+//        every { produtoRepository.save(produto) } returns produto
+//        every { produtoRepository.findById(produto.codigo) } returns Optional.of(produto)
+//
+//        var imagem = produto.imagens?.first()
+//
+//        if (imagem != null) {
+//            produtoService.defineImagemPrincipal(produto.codigo, imagem.id)
+//        }
+//        imagem?.principal?.let { assertTrue(it) }
+//
+//        produto.imagens?.forEach { it.principal = false }
+//        if (imagem != null) {
+//            produtoService.defineImagemPrincipal(produto.codigo, imagem.id)
+//        }
+//        imagem?.principal?.let { assertTrue(it) }
+//    }
+//
+//    @Test
+//    fun `test marque uma imagem como princial com uma lista nula`(){
+//
+//        var produto = ProdutoBuild.produto("6500")
+//        every { produtoRepository.save(produto) } returns produto
+//        every { produtoRepository.findById(produto.codigo) } returns Optional.of(produto)
+//
+//        produto.imagens = null
+//        val imagem: Imagem = ProdutoBuild.produto().imagens!!.first()
+//
+//        assertThrows<EntityResponseException> { produtoService.defineImagemPrincipal(produto.codigo, imagem.id) }
+//
+//    }
 
 
 //    @Test

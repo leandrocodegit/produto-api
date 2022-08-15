@@ -7,6 +7,7 @@ plugins {
 	kotlin("plugin.spring") version "1.6.21"
 	kotlin("plugin.jpa") version "1.6.21"
 	kotlin("kapt") version "1.5.10"
+
 }
 
 group = "com.produto"
@@ -53,3 +54,4 @@ tasks.withType<KotlinCompile> {
 tasks.withType<Test> {
 	useJUnitPlatform()
 }
+
