@@ -77,12 +77,12 @@ class ProdutoBuild {
                                         Deposito(
                                                 1L,
                                                 saldo1,
-                                                Local( 1, "Padrão ","Padrão"),null
+                                                Local( 1, "Padrão ","Padrão"),codigo
                                         ),
                                         Deposito(
                                                 1L,
                                                 saldo2,
-                                                Local( 1, "Padrão ","Padrão"), null
+                                                Local( 1, "Padrão ","Padrão"), codigo
                                         )),0),
                         Categoria(
                                 1L,

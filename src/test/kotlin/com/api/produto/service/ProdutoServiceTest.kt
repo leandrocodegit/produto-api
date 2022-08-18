@@ -55,7 +55,7 @@ class ProdutoServiceTest {
         assertEquals(produto.codigo, produtoSave.codigo)
         assertEquals(produtoSave.estoque.depositos.size, 1)
         assertNotNull(produtoSave.estoque.depositos)
-        assertEquals(produtoSave.estoque.depositos.first().produto?.codigo, produto.codigo)
+        assertEquals(produtoSave.estoque.depositos.first().produtoCodigo, produto.codigo)
 
     }
 

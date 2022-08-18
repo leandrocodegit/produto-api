@@ -6,5 +6,6 @@ const val URL_PRODUTO_VENDA = "/api/v1/produto/venda"
 const val URL_PRODUTO_STATUS_CODIGO = "/api/v1/produto/status/{codigo}"
 
 const val URL_DEPOSITO = "/api/v1/deposito"
-const val URL_DEPOSITO_ID = "/api/v1/deposito/{id}"
-const val URL_DEPOSITO_FILTRO = "/api/v1/deposito/filtro/{codigo}"
+const val URL_DEPOSITO_ID = "/api/v1/deposito/{codigo}/{id}"
+const val URL_DEPOSITO_FILTRO = "/api/v1/deposito/{codigo}"
+const val URL_DEPOSITO_LOCAL = "/api/v1/deposito/local"

@@ -15,7 +15,10 @@ class DepositoRequest(
         var local: LocalRequest
 ){
         constructor():this(0,"",0,LocalRequest())
+        constructor( id: Long,codigoProduto: String,
+                     local: LocalRequest):this(id,codigoProduto,0,local)
         constructor( codigoProduto: String,
                      saldo: Int,
                      local: LocalRequest):this(0,codigoProduto,saldo,local)
+
 }
