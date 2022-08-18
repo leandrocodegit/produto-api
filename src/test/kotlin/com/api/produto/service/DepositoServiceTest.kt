@@ -51,13 +51,13 @@ class DepositoServiceTest {
     @Test
     fun `test busca deposito id e produto relacionado`(){
 
-        var deposito = Deposito(1, 0, Local(1),ProdutoBuild.produto("9090"))
-        every { depositoRespository.findByIdAndProdutoCodigo(deposito.id,deposito.produto!!.codigo) } returns Optional.of(deposito)
+        var deposito = Deposito(1, 0, Local(1), "9090")
+        every { depositoRespository.findByIdAndProdutoCodigo(deposito.id,deposito.produtoCodigo!!) } returns Optional.of(deposito)
 
         var depositoSave = depositoService.findDepositoByID(deposito.id, "9090")
 
         assertEquals(1,depositoSave.id)
-        assertEquals("9090",depositoSave.produto!!.codigo)
+        assertEquals("9090",depositoSave.produtoCodigo!!)
     }
 
     @Test
@@ -65,9 +65,9 @@ class DepositoServiceTest {
 
          var produto = ProdutoBuild.produto("8080")
         var depositos = mutableListOf(
-                Deposito(1,   100, Local(1L),produto),
-                Deposito(2,  100, Local(2L),produto),
-                Deposito(3,  100, Local(2L),produto))
+                Deposito(1,   100, Local(1L),produto.codigo),
+                Deposito(2,  100, Local(2L),produto.codigo),
+                Deposito(3,  100, Local(2L),produto.codigo))
 
         every { depositoRespository.findAllByProdutoCodigo(produto.codigo) } returns depositos
 
@@ -79,8 +79,8 @@ class DepositoServiceTest {
     @Test
     fun `test busca deposito id e produto relacionado inexistente`(){
 
-        var deposito = Deposito(1, 0, Local(1),ProdutoBuild.produto("9090"))
-        every { depositoRespository.findByIdAndProdutoCodigo(deposito.id,deposito.produto!!.codigo) } returns Optional.empty()
+        var deposito = Deposito(1, 0, Local(1), "9090")
+        every { depositoRespository.findByIdAndProdutoCodigo(deposito.id,deposito.produtoCodigo!!) } returns Optional.empty()
 
         assertThrows<EntityResponseException> { depositoService.findDepositoByID(deposito.id, "9090") }
     }
@@ -92,8 +92,8 @@ class DepositoServiceTest {
         var deposito = produtoMapper.toEntity(depositoRequest)
         var produto = ProdutoBuild.produto("7050")
         produto.estoque.depositos = mutableListOf(
-                Deposito(1,   100, Local(1L),produto),
-                Deposito(2,  100, Local(2L),produto))
+                Deposito(1,   100, Local(1L),produto.codigo),
+                Deposito(2,  100, Local(2L),produto.codigo))
 
         every { estoqueRepository.findById(produto.estoque.id) } returns Optional.of(produto.estoque)
         every { estoqueRepository.save(produto.estoque) } returns produto.estoque
@@ -103,7 +103,7 @@ class DepositoServiceTest {
 
         var depositoSave = depositoService.criarDeposito(depositoRequest)
 
-        assertTrue( depositoSave.depositos.any{ it.produto?.codigo == produto.codigo})
+        assertTrue( depositoSave.depositos.any{ it.produtoCodigo == produto.codigo})
         assertEquals( 3, depositoSave.depositos.size)
         assertEquals( 300,produto.estoque.estoqueAtual)
     }
@@ -114,8 +114,8 @@ class DepositoServiceTest {
         var depositoRequest = DepositoRequest(1L,"7050",123, LocalRequest(1L))
 
         var produto = ProdutoBuild.produto("7050")
-        var deposito1 = Deposito(1L, 0, Local(1), produto)
-        var deposito2 = Deposito(2L, 0, Local(1), produto)
+        var deposito1 = Deposito(1L, 0, Local(1), produto.codigo)
+        var deposito2 = Deposito(2L, 0, Local(1), produto.codigo)
         produto.estoque.depositos = mutableListOf(
                 deposito1,
                 deposito2)
@@ -136,7 +136,7 @@ class DepositoServiceTest {
     fun `test atualiza saldo deposito inexistente`(){
 
         var depositoRequest = DepositoRequest(1,"7050",123, LocalRequest(1L))
-        var deposito = Deposito(1, 0, Local(1),ProdutoBuild.produto("7050"))
+        var deposito = Deposito(1, 0, Local(1), "7050")
 
         every { depositoRespository.findByIdAndProdutoCodigo(deposito.id, depositoRequest.codigoProduto) } returns Optional.empty()
 
@@ -150,8 +150,8 @@ class DepositoServiceTest {
         var depositoRequest = DepositoRequest(3L,"7050",123, LocalRequest(1L))
 
         var produto = ProdutoBuild.produto("7050")
-        var deposito1 = Deposito(1L, 0, Local(1),produto)
-        var deposito2 = Deposito(2L, 0, Local(1),produto)
+        var deposito1 = Deposito(1L, 0, Local(1),produto.codigo)
+        var deposito2 = Deposito(2L, 0, Local(1),produto.codigo)
         produto.estoque.depositos = mutableListOf(
                 deposito1,
                 deposito2)
@@ -164,12 +164,12 @@ class DepositoServiceTest {
     @Test
     fun `test atualiza local deposito`(){
 
-        var deposito = Deposito(1, 0, Local(1),ProdutoBuild.produto())
+        var deposito = Deposito(1, 0, Local(1), "8000")
 
-        every { depositoRespository.findByIdAndProdutoCodigo(deposito.id,deposito.produto!!.codigo) } returns Optional.of(deposito)
+        every { depositoRespository.findByIdAndProdutoCodigo(deposito.id,deposito.produtoCodigo!!) } returns Optional.of(deposito)
         every { depositoRespository.save(deposito) } returns deposito
 
-        var depositoSave = depositoService.atualizaLocal(deposito.id, deposito.produto!!.codigo, Local(2))
+        var depositoSave = depositoService.atualizaLocal(deposito.id, deposito.produtoCodigo!!, Local(2))
 
         assertTrue( depositoSave.local.id == 2L)
 
@@ -178,23 +178,23 @@ class DepositoServiceTest {
     @Test
     fun `test delete deposito`(){
 
-        var deposito = Deposito(1, 0, Local(1),ProdutoBuild.produto("9090"))
+        var deposito = Deposito(1, 0, Local(1),"9090")
 
-        every { depositoRespository.findByIdAndProdutoCodigo(deposito.id,deposito.produto!!.codigo) } returns Optional.of(deposito)
+        every { depositoRespository.findByIdAndProdutoCodigo(deposito.id,deposito.produtoCodigo!!) } returns Optional.of(deposito)
         every { depositoRespository.deleteById(deposito.id) } returns Unit
 
-        assertTrue( depositoService.deleteDeposito(deposito.id,deposito.produto!!.codigo) == Unit)
+        assertTrue( depositoService.deleteDeposito(deposito.id,deposito.produtoCodigo!!) == Unit)
 
     }
 
     @Test
     fun `test delete deposito inexistente`(){
 
-        var deposito = Deposito(1, 0, Local(1),ProdutoBuild.produto())
+        var deposito = Deposito(1, 0, Local(1), "8000")
 
-        every { depositoRespository.findByIdAndProdutoCodigo(deposito.id, deposito.produto!!.codigo) } returns Optional.empty()
+        every { depositoRespository.findByIdAndProdutoCodigo(deposito.id, deposito.produtoCodigo!!) } returns Optional.empty()
 
-        assertThrows<EntityResponseException> {  depositoService.deleteDeposito(deposito.id, deposito.produto!!.codigo)}
+        assertThrows<EntityResponseException> {  depositoService.deleteDeposito(deposito.id, deposito.produtoCodigo!!)}
 
     }
 }

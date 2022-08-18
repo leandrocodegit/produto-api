@@ -76,12 +76,12 @@ class ProdutoBuildProd {
                             Deposito(
                                     1L,
                                     saldo1,
-                                    Local( 1L,"Padrão", "Padrão"),this.produto()
+                                    Local( 1L,"Padrão", "Padrão"),this.produto().codigo
                             ),
                             Deposito(
                                     2L,
                                     saldo2,
-                                    Local( 1L,"Padrão", "Padrão"),this.produto()
+                                    Local( 1L,"Padrão", "Padrão"),this.produto().codigo
                             )),0),
                     Categoria(
                             1L,

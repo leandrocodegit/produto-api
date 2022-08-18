@@ -43,7 +43,7 @@ class ProdutoService(
         if(produtoRepository.findById(produto.codigo).isPresent)
             throw EntityResponseException("Produto com id ${produto.codigo} ja cadastrado", CodeError.DUPLICATE)
         produto.estoque = Estoque(
-                mutableListOf(Deposito( 0, Local(1L),produto)))
+                mutableListOf(Deposito( 0, Local(1L),produto.codigo)))
         return produtoRepository.save(produto)
     }
 

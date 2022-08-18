@@ -37,7 +37,7 @@ class DepositoService(
     private fun isValid(produto: Produto, depositoRequest: DepositoRequest): Boolean{
             produto.let {
                 it.estoque.depositos.any { result ->
-                    result.codigo?.codigo == depositoRequest.codigoProduto
+                    result.produtoCodigo == depositoRequest.codigoProduto
                 }.let {
                     if (it.not())
                         throw EntityResponseException("Falha ao atualizar saldo", CodeError.CONTENT_INVALID)
@@ -56,7 +56,7 @@ class DepositoService(
                         Deposito(
                                 0,
                                 depositoRequest.saldo,
-                                Local(depositoRequest.local.id),this)
+                                Local(depositoRequest.local.id),this.codigo)
                 )
             }.apply {
                 atualizaSaldoEstoque(estoque)
@@ -67,15 +67,16 @@ class DepositoService(
     fun atualizaSaldo(depositoRequest: DepositoRequest): Estoque {
 
         var deposito = findDepositoByID(depositoRequest.id, depositoRequest.codigoProduto)
+        var produto = findProdutoByCodigo(depositoRequest.codigoProduto)
 
                     deposito.apply {
                         saldo = depositoRequest.saldo
                     }.let {
                         depositoRespository.save(it)
                     }.let {
-                        it.codigo?.estoque = atualizaSaldoEstoque(it.produto!!.estoque)
+                         produto?.estoque = atualizaSaldoEstoque( produto!!.estoque)
                     }
-        return estoqueRepository.save(deposito.produto!!.estoque)
+        return estoqueRepository.save(produto.estoque)
     }
 
     fun atualizaLocal(id: Long, codigoProduto: String,  novoLocal: Local) = findDepositoByID(id,codigoProduto).apply {
