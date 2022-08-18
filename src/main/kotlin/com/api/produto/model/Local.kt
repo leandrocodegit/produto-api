@@ -1,11 +1,20 @@
 package com.api.produto.model
 
-import javax.persistence.Embeddable
+
 import javax.persistence.Entity
 import javax.persistence.GeneratedValue
 import javax.persistence.GenerationType
 import javax.persistence.Id
 
-@Embeddable
+@Entity
+
 class Local(
-      var endereco: String)
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        var id: Long,
+        var nome: String,
+        var endereco: String
+        ){
+    constructor(): this(0,"","")
+    constructor(id: Long): this(id,"","")
+}

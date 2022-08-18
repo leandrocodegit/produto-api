@@ -7,5 +7,5 @@ import org.springframework.stereotype.Repository
 
 import java.util.UUID
 
-@Repository
+@RepositoryRestResource
 interface ImageStore: ContentStore<ImageContentProfile, String>

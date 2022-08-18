@@ -8,4 +8,4 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource
 import org.springframework.stereotype.Repository
 
 @Repository
-interface ImageContentProfileRepository: CrudRepository<ImageContentProfile, String>
+interface ImageContentProfileRepository: JpaRepository<ImageContentProfile, String>

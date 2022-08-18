@@ -7,6 +7,7 @@ import com.api.produto.model.*
 import com.api.produto.model.image.Imagem
 import org.mapstruct.BeanMapping
 import org.mapstruct.Mapper
+import org.mapstruct.Mapping
 import org.mapstruct.MappingTarget
 import org.mapstruct.Mappings
 import org.mapstruct.NullValuePropertyMappingStrategy
@@ -23,6 +24,7 @@ interface ProdutoMapper {
     fun toResponse(deposito: Deposito): DepositoResponse
     fun toResponse(imagem: Imagem): ImagemResponse
     fun toResponse(local: Local): LocalResponse
+    @Mapping(target = "estoque", expression = "java(new Estoque())")
     fun toEntity(produtoRequest: ProdutoRequest): Produto
     fun toEntity(categoriaRequest: CategoriaRequest): Categoria
     fun toEntity(estoqueRequest: EstoqueRequest): Estoque

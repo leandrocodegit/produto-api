@@ -3,6 +3,8 @@ package com.api.produto.service
 import com.api.produto.build.ProdutoBuild
 import com.api.produto.exceptions.EntityResponseException
 import com.api.produto.mapper.ProdutoMapper
+import com.api.produto.model.Deposito
+import com.api.produto.model.Local
 import com.api.produto.model.image.Imagem
 import com.api.produto.repository.EstoqueRepository
 import com.api.produto.repository.ImageRepository
@@ -45,18 +47,23 @@ class ProdutoServiceTest {
     @Test
     fun `test create new produto`(){
 
-        val produto = ProdutoBuild.produto()
+        val produto = ProdutoBuild.produto("7050")
         every { produtoRepository.findById(produto.codigo).isPresent } returns false
         every { produtoService.createProduto(produto) } returns produto
-        val proutoSave = produtoService.createProduto(produto)
+        val produtoSave = produtoService.createProduto(produto)
 
-        assert(produto.codigo == proutoSave.codigo)
+        assertEquals(produto.codigo, produtoSave.codigo)
+        assertEquals(produtoSave.estoque.depositos.size, 1)
+        assertNotNull(produtoSave.estoque.depositos)
+        assertEquals(produtoSave.estoque.depositos.first().produto?.codigo, produto.codigo)
+
     }
 
     @Test
     fun `test create new produto allread`(){
 
         val produto = ProdutoBuild.produto()
+
         every { produtoRepository.findById(produto.codigo).isPresent } returns true
         every { produtoRepository.findById(produto.codigo) } returns Optional.of(produto)
         every { produtoService.createProduto(produto) } returns produto
@@ -216,65 +223,5 @@ class ProdutoServiceTest {
         produto.status = true
         assertFalse(produtoService.mudaStatus(produto.codigo).status)
     }
-
-//    @Test
-//    fun `test marque uma imagem como principal`(){
-//
-//        var produto = ProdutoBuild.produto("6500")
-//        every { produtoRepository.save(produto) } returns produto
-//        every { produtoRepository.findById(produto.codigo) } returns Optional.of(produto)
-//
-//        var imagem = produto.imagens?.first()
-//
-//        if (imagem != null) {
-//            produtoService.defineImagemPrincipal(produto.codigo, imagem.id)
-//        }
-//        imagem?.principal?.let { assertTrue(it) }
-//
-//        produto.imagens?.forEach { it.principal = false }
-//        if (imagem != null) {
-//            produtoService.defineImagemPrincipal(produto.codigo, imagem.id)
-//        }
-//        imagem?.principal?.let { assertTrue(it) }
-//    }
-//
-//    @Test
-//    fun `test marque uma imagem como princial com uma lista nula`(){
-//
-//        var produto = ProdutoBuild.produto("6500")
-//        every { produtoRepository.save(produto) } returns produto
-//        every { produtoRepository.findById(produto.codigo) } returns Optional.of(produto)
-//
-//        produto.imagens = null
-//        val imagem: Imagem = ProdutoBuild.produto().imagens!!.first()
-//
-//        assertThrows<EntityResponseException> { produtoService.defineImagemPrincipal(produto.codigo, imagem.id) }
-//
-//    }
-
-
-//    @Test
-//    fun `test save image produto` (){
-//
-        val path = kotlin.io.path.Path("").toAbsolutePath()
-        val file: MultipartFile = MockMultipartFile("template.png", FileInputStream(File("$path/imagens/template.png")))
-//        var imagem = Imagem(
-//                0,
-//                file.originalFilename,
-//                false,
-//                UUID.randomUUID(),
-//                file.size,
-//                file.contentType.orEmpty(),
-//        )
-//        val produto = ProdutoBuild.produto("40124", 100, 20)
-//        produto.imagens = listOf()
-//        every { produtoRepository.findById(produto.codigo) } returns Optional.of(produto)
-//        every { produtoRepository.save(produto) } returns produto
-//        every { imageRepository.save(imagem) } returns imagem
-//        every { imageStoreService.saveImage(file) } returns imagem
-//        every { imageStore.setContent(any(), file.inputStream) } returns imagem
-//
-//        assert(produtoService.saveImagem(produto.codigo, file).imagens?.size == 1)
-//    }
 
 }

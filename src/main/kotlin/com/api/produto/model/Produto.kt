@@ -4,6 +4,7 @@ import com.api.produto.model.image.Imagem
 import javax.persistence.*
 
 @Entity
+@Embeddable
 class Produto(
         @Id
         var codigo: String,
@@ -95,7 +96,7 @@ class Produto(
         var imageThumbnail: String?,
         @OneToMany(cascade = [CascadeType.ALL])
         var imagens: MutableList<Imagem>?,
-        @OneToOne
+        @OneToOne(cascade = [CascadeType.ALL])
         var estoque: Estoque,
         @OneToOne
         var categoria: Categoria,

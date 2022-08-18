@@ -6,6 +6,6 @@ import javax.persistence.ManyToMany
 class EstoqueResponse(
         val id: Long,
         var estoqueAtual: Int,
-        var depositos: List<DepositoResponse>,
+        var depositos: MutableList<DepositoResponse>,
         var reserva: Int
 )

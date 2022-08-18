@@ -1,6 +1,7 @@
 package com.api.produto.controller
 
 import com.api.produto.controller.request.ProdutoRequest
+import com.api.produto.controller.request.VendaRequest
 import com.api.produto.controller.response.ProdutoResponse
 import com.api.produto.file.RenderImagem
 import com.api.produto.mapper.ProdutoMapper
@@ -29,13 +30,32 @@ class ProdutoController(
 ) {
 
     @GetMapping("{codigo}")
-    fun buscaProdutoByCodigo(@PathVariable codigo: String): ResponseEntity<ProdutoResponse> {
-        var lista:List<String> = mutableListOf()
-        lista.plus("Emento adicionado com sucesso!")
+    fun buscaProdutoByCodigo(@PathVariable codigo: String) =
+            ResponseEntity.ok(mapper.toResponse(produtoService.findProdutoByCodigo(codigo)))
 
-        println(lista.toString())
-        return ResponseEntity.ok(mapper.toResponse(produtoService.findProdutoByCodigo(codigo)))
-    }
+    @GetMapping
+    fun listAllProduto() =
+            ResponseEntity.ok(produtoService.listAllProdutos().map { mapper.toResponse(it) }.toList())
+
+    @PatchMapping
+    fun updateProduto(@RequestBody @Valid produtoRequest: ProdutoRequest) =
+            ResponseEntity.ok(mapper.toResponse(produtoService.updateProduto(
+                produtoRequest
+        )))
+
+    @GetMapping("/status/{codigo}")
+    fun mudaStatusProduto(@PathVariable codigo: String) = ResponseEntity.ok(mapper.toResponse(produtoService.mudaStatus(
+                codigo
+        )))
+
+    @DeleteMapping("/{codigo}")
+    fun deleteProduto(@PathVariable codigo: String) = ResponseEntity.ok(produtoService.deleteProduto(codigo))
+
+    @PostMapping("/venda")
+    fun vendaProduto(@RequestBody @Valid vendaRequest: VendaRequest) = ResponseEntity.ok(produtoService.vendaProduto(
+            vendaRequest.codigo,
+            vendaRequest.quantidade
+    ))
 
     @PostMapping
     fun createProduto(@RequestBody @Valid produtoRequest: ProdutoRequest): ResponseEntity<ProdutoResponse> {
@@ -45,17 +65,5 @@ class ProdutoController(
                                 mapper.toEntity(produtoRequest))))
     }
 
-    @GetMapping
-    fun listAllProduto(): ResponseEntity<List<ProdutoResponse>> {
-        var list = produtoService.listAllProdutos().map { mapper.toResponse(it) }.toList()
-        return ResponseEntity.ok(list)
-    }
-
-    @PatchMapping
-    fun updateProduto(@RequestBody produtoRequest: ProdutoRequest): ResponseEntity<ProdutoResponse> {
-        return ResponseEntity.ok(mapper.toResponse(produtoService.updateProduto(
-                produtoRequest
-        )))
-    }
 
 }

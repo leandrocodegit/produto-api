@@ -30,7 +30,7 @@ class ImagemController(
         var produto = produtoService.findProdutoByCodigo(codigo)
         var imagemSave = imageStoreService.saveImage(produto, file.inputStream, file.size, file.contentType.toString())
 
-        produto.imagens?.add(imagemSave)
+        produto.imagens?.apply { add(imagemSave) }
         imageStoreService.atualizaLinkDeImagens(produtoService.updateProduto(produto))
     }
 

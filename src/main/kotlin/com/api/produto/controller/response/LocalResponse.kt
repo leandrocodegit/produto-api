@@ -1,4 +1,7 @@
 package com.api.produto.controller.response
 
 class LocalResponse(
-       var endereco: String)
+        var id: Long,
+        var nome: String,
+        var endereco: String
+        )

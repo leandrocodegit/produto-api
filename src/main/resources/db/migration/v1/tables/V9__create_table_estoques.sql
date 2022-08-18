@@ -1,0 +1,5 @@
+CREATE TABLE estoques(
+id BIGINT AUTO_INCREMENT PRIMARY KEY NOT NULL,
+estoque_atual INT,
+reserva INT
+)

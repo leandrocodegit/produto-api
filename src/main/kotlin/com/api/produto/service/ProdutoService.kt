@@ -6,21 +6,29 @@ import com.api.produto.exceptions.EntityResponseException
 import com.api.produto.file.ImageFile
 import com.api.produto.file.RenderImagem
 import com.api.produto.mapper.ProdutoMapper
+import com.api.produto.model.Deposito
+import com.api.produto.model.Estoque
+import com.api.produto.model.Local
 import com.api.produto.model.image.Imagem
 import com.api.produto.model.Produto
 import com.api.produto.model.image.ImageContentProfile
 import com.api.produto.repository.ImageStore
+import com.api.produto.repository.LocalRepository
 import com.api.produto.repository.ProdutoRepository
+import org.mapstruct.factory.Mappers
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 import java.util.*
 
 @Service
 class ProdutoService(
-        private val produtoRepository: ProdutoRepository,
-        private val estoqueService: EstoqueService,
-        private val mapper: ProdutoMapper
+        private val produtoRepository: ProdutoRepository
 ) {
+    @Autowired
+    private lateinit var estoqueService: EstoqueService
+    @Autowired
+    private lateinit var mapper: ProdutoMapper
 
     fun findProdutoByCodigo(codigo: String): Produto{
         return produtoRepository.findById(codigo)
@@ -34,6 +42,8 @@ class ProdutoService(
     fun createProduto(produto: Produto): Produto{
         if(produtoRepository.findById(produto.codigo).isPresent)
             throw EntityResponseException("Produto com id ${produto.codigo} ja cadastrado", CodeError.DUPLICATE)
+        produto.estoque = Estoque(
+                mutableListOf(Deposito( 0, Local(1L),produto)))
         return produtoRepository.save(produto)
     }
 
@@ -41,7 +51,7 @@ class ProdutoService(
        var produto = findProdutoByCodigo(codigo)
         if(produto.status.not())
             throw EntityResponseException("Produto com id ${produto.codigo} inativo", CodeError.INACTIVE)
-        if(estoqueService.totalEstoque(produto.estoque.id) - produto.estoque.reserva  >= quantidade)
+        if(estoqueService.totalEstoque(produto.estoque!!.id) - produto.estoque!!.reserva  >= quantidade)
             return true
         return false
     }
@@ -49,19 +59,8 @@ class ProdutoService(
     fun vendaProduto(codigo: String, quantidade: Int): Produto{
       var produroDB = findProdutoByCodigo(codigo)
         validaEstoque(codigo, quantidade)
-        estoqueService.saveReserva(produroDB.estoque.id, quantidade)
+        estoqueService.saveReserva(produroDB.estoque!!.id, quantidade)
        return produtoRepository.save(produroDB)
-    }
-
-    fun saveImagem(codigo: String, file: MultipartFile): Produto{
-        var produroDB = findProdutoByCodigo(codigo)
-        var imagem = Imagem(
-                0,
-                false,
-                mutableListOf( ImageContentProfile(UUID.randomUUID().toString(), 0, "type",false) )
-         )
-      //  produroDB.imagens = produroDB.imagens.apply { imageStoreService.saveImage(imagem, file.inputStream, "png") }
-        return produroDB
     }
 
     fun deleteProduto(codigo: String){

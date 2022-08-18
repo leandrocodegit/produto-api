@@ -73,18 +73,16 @@ class ProdutoBuild {
 
                         Estoque(1L,
                                 saldo1 + saldo2,
-                                listOf(
+                                mutableListOf(
                                         Deposito(
                                                 1L,
-                                                "Local",
                                                 saldo1,
-                                                Local( "CD")
+                                                Local( 1, "Padrão ","Padrão"),null
                                         ),
                                         Deposito(
-                                                2L,
-                                                "Local",
+                                                1L,
                                                 saldo2,
-                                                Local( "CD")
+                                                Local( 1, "Padrão ","Padrão"), null
                                         )),0),
                         Categoria(
                                 1L,
@@ -137,21 +135,6 @@ class ProdutoBuild {
                     "",
                     "",
                     true,
-                    Estoque(1L,
-                            100,
-                            listOf(
-                                    Deposito(
-                                            1L,
-                                            "Local",
-                                            100,
-                                            Local( "CD")
-                                    ),
-                                    Deposito(
-                                            2L,
-                                            "Local",
-                                            0,
-                                            Local( "CD")
-                                    )),0),
                     Categoria(
                             1L,
                             "Taças"
@@ -159,51 +142,5 @@ class ProdutoBuild {
             )
         }
 
-        fun createRequestSimple(codigo: String): ProdutoRequestSimple {
-            return ProdutoRequestSimple(
-                    codigo,
-                    "Taça",
-                    "Jogo com 6 taças cristal",
-                    "JG",
-                    400.0,
-                    400.0,
-                    6.0,
-                    6.0,
-                    1,
-                    100,
-                    "",
-                    "",
-                    "Jogo com 6 taças cristal",
-                    "",
-                    "6",
-                    "10",
-                    "8",
-                    "MM",
-                    "",
-                    "",
-                    "Decoratem",
-                    "Bohemia",
-                    "",
-                    "",
-                    "Importado",
-                    "",
-                    "",
-                    "",
-                    "",
-                    6,
-                    0,
-                    "",
-                    "",
-                    "",
-                    12,
-                    "",
-                    "N",
-                    "",
-                    "",
-                    "",
-                    "",
-                    true
-            )
-        }
     }
 }

@@ -29,8 +29,8 @@ class ProdutoMapperTest() {
 
         assertTrue(produto.codigo == produtoResponse.codigo)
         assertTrue(produto.categoria.id == produtoResponse.categoria.id)
-        assertTrue(produto.estoque.id == produtoResponse.estoque.id)
-        assertTrue(produto.estoque.depositos.first().id == produtoResponse.estoque.depositos.first().id)
+        assertTrue(produto.estoque!!.id == produtoResponse.estoque.id)
+        assertTrue(produto.estoque!!.depositos.first().id == produtoResponse.estoque.depositos.first().id)
         assertTrue(produto.imagens?.first()?.id == produtoResponse.imagens?.first()?.id)
 
     }

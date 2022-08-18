@@ -52,8 +52,8 @@ class ProdutoResponse(
         var codigopai: String,
         var status: Boolean,
         var imagens: MutableList<Imagem>?,
-        var estoque: Estoque,
-        var categoria: Categoria,
+        var estoque: EstoqueResponse,
+        var categoria: CategoriaResponse,
 ) {
     var imageOriginal: String? = null
         get() {

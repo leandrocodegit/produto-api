@@ -11,12 +11,12 @@ import kotlin.io.path.Path
 
 
 @Configuration
-class StoreConfig: WebMvcConfigurer{
+class StoreConfig{
 
     @Bean
     fun filesystemRoot(): File? {
         try {
-            return File("imagens/")
+            return File("/workspace/imagens/")
         } catch (ioe: Exception) {
             ioe.printStackTrace()
         }
@@ -28,18 +28,8 @@ class StoreConfig: WebMvcConfigurer{
     }
     @Bean
     fun imageContentEventListener(): ImageContentEventListener {
+        println("********* " + filesystemRoot()?.absolutePath )
         return ImageContentEventListener()
     }
 
-    override fun addResourceHandlers(registry: ResourceHandlerRegistry) {
-        exposeDirectory("imagens", registry)
-    }
-
-    private fun exposeDirectory(dirName: String, registry: ResourceHandlerRegistry) {
-        var dirName = Path("").toAbsolutePath().toString() + "\\imagens"
-        println("************** file:$dirName")
-         dirName = dirName.replace("\\", "/")
-        println("**************  $dirName ")
-        registry.addResourceHandler("$dirName/**").addResourceLocations("file:/$dirName")
-    }
 }

@@ -13,7 +13,7 @@ class ProdutoRequest(
         @field:Size(min = 1, max = 20)
         var codigo: String,
         @field:NotBlank
-        @field:Size(min = 5, max = 40)
+        @field:Size(min = 1, max = 40)
         var tipo: String,
         @field:NotBlank
         @field:Size(min = 20, max = 254)
@@ -39,9 +39,14 @@ class ProdutoRequest(
         @field:Size(min = 1, max = 254)
         var descricaoCurta: String,
         var descricaoComplementar: String,
+        @field:Min(1)
         var largura: Int,
+        @field:Min(1)
         var altura: Int,
+        @field:Min(1)
         var profundidade: Int,
+        @field:NotBlank
+        @field:Size(min = 2, max = 40)
         var unidadeMedida: String,
         var dataInclusao: String,
         var dataAlteracao: String,
@@ -58,6 +63,7 @@ class ProdutoRequest(
         var linkExterno: String,
         var observacoes: String,
         var grupo: String,
+        @field:Min(1)
         var itensPorCaixa: Int,
         var volumes: Int,
         var urlVideo: String,
@@ -72,7 +78,6 @@ class ProdutoRequest(
         var descricaoFornecedor: String,
         var codigopai: String,
         var status: Boolean,
-        var estoque: Estoque,
         var categoria: Categoria,
 ) {
 }

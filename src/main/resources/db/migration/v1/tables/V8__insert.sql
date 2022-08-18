@@ -1,3 +1,0 @@
---INSERT INTO `produto`.`categoria` (`id`, `descricao`) VALUES ('1', '1');
---INSERT INTO `produto`.`deposito` (`id`, `endereco`, `nome`, `saldo`) VALUES ('1', '1', '1', '1');
---INSERT INTO `produto`.`estoque` (`id`, `estoque_atual`, `reserva`) VALUES ('1', '1', '1');

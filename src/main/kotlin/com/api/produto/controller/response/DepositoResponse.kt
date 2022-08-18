@@ -5,7 +5,6 @@ import javax.persistence.Embedded
 
 class DepositoResponse(
         var id: Long,
-        var nome: String,
         var saldo: Int,
         var local: LocalResponse
 )

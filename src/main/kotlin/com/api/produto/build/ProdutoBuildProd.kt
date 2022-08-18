@@ -72,18 +72,16 @@ class ProdutoBuildProd {
 
                     Estoque(1L,
                             saldo1 + saldo2,
-                            listOf(
+                            mutableListOf(
                             Deposito(
                                     1L,
-                                    "Local",
                                     saldo1,
-                                    Local( "CD")
+                                    Local( 1L,"Padrão", "Padrão"),this.produto()
                             ),
                             Deposito(
                                     2L,
-                                    "Local",
                                     saldo2,
-                                    Local( "CD")
+                                    Local( 1L,"Padrão", "Padrão"),this.produto()
                             )),0),
                     Categoria(
                             1L,
