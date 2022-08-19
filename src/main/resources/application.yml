@@ -6,7 +6,7 @@ spring:
     matching-strategy: ant-path-matcher
   datasource:
     driverClassName: com.mysql.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/produto?createDatabaseIfNotExist=True&serverTimezone=UTC
+    url: jdbc:mysql://192.168.1.200:3306/produto?createDatabaseIfNotExist=True
     username: root
     password: root
   jpa:
@@ -14,4 +14,7 @@ spring:
     generate-ddl: true
     show-sql: true
   flyway:
+    enable: false
     clean-disabled: true
+
+

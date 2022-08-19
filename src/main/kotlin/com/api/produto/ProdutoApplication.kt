@@ -1,4 +1,4 @@
-package com.api.prdouto
+package com.api.produto
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
