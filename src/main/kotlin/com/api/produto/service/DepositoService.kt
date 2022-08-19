@@ -2,6 +2,7 @@ package com.api.produto.service
 
 import com.api.produto.controller.request.DepositoLocalRequest
 import com.api.produto.controller.request.DepositoRequest
+import com.api.produto.controller.request.VendaDepositoRequest
 import com.api.produto.enuns.CodeError
 import com.api.produto.exceptions.EntityResponseException
 import com.api.produto.model.Deposito
@@ -33,9 +34,10 @@ class DepositoService(
                 .orElseThrow { throw EntityResponseException("Produto nao encontrado", CodeError.NOT_FOUND) }
     }
 
-    private fun atualizaSaldoEstoque(codigo: String) =
+    private fun atualizaSaldoEstoque(codigo: String, reservaDecrement: Int) =
             findProdutoByCodigo(codigo).estoque.apply {
                 estoqueAtual = depositos.sumOf { result -> result.saldo }
+                reserva -= reservaDecrement
             }.let {
                 estoqueRepository.save(it)
             }
@@ -56,30 +58,42 @@ class DepositoService(
             depositoRespository.findAllByProdutoCodigo(codigo)
 
 
-    fun criarDeposito(depositoRequest: DepositoRequest) =
-            findProdutoByCodigo(depositoRequest.codigoProduto).apply {
+    fun criarDeposito(drt: DepositoRequest) =
+            findProdutoByCodigo(drt.codigoProduto).apply {
                 estoque.depositos.add(
                         Deposito(
                                 0,
-                                depositoRequest.saldo,
-                                Local(depositoRequest.local.id), this.codigo)
+                                drt.saldo,
+                                Local(drt.local.id), this.codigo)
                 )
             }.let {
-                atualizaSaldoEstoque(it.codigo)
+                atualizaSaldoEstoque(it.codigo, 0)
             }
 
-    fun atualizaSaldo(depositoRequest: DepositoRequest): Estoque {
+    fun decrementarSaldo(venda: VendaDepositoRequest): Estoque {
 
-        var deposito = findDepositoByID(depositoRequest.id, depositoRequest.codigoProduto)
-        var produto = findProdutoByCodigo(depositoRequest.codigoProduto)
+        var deposito = findDepositoByID(venda.idDepostito, venda.codigoProduto)
+        findProdutoByCodigo(venda.codigoProduto)
 
         deposito.apply {
-            saldo = depositoRequest.saldo
+            saldo -= venda.quantidade
         }.let {
             depositoRespository.save(it)
         }
-        return atualizaSaldoEstoque(depositoRequest.codigoProduto)
+        return atualizaSaldoEstoque(venda.codigoProduto, venda.quantidade)
+    }
 
+    fun atualizaSaldo(drt: DepositoRequest): Estoque {
+
+        var deposito = findDepositoByID(drt.id, drt.codigoProduto)
+        findProdutoByCodigo(drt.codigoProduto)
+
+        deposito.apply {
+            saldo = drt.saldo
+        }.let {
+            depositoRespository.save(it)
+        }
+        return atualizaSaldoEstoque(drt.codigoProduto, 0)
     }
 
     fun atualizaLocal(dlr: DepositoLocalRequest) = findDepositoByID(dlr.id, dlr.codigoProduto).apply {
@@ -94,7 +108,7 @@ class DepositoService(
         findDepositoByID(id, codigoProduto).let {
             depositoRespository.deleteById(id)
         }.let {
-           return atualizaSaldoEstoque(codigoProduto)
+           return atualizaSaldoEstoque(codigoProduto, 0)
         }
     }
 }

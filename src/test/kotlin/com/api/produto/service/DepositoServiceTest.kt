@@ -4,6 +4,7 @@ import com.api.produto.build.ProdutoBuild
 import com.api.produto.controller.request.DepositoLocalRequest
 import com.api.produto.controller.request.DepositoRequest
 import com.api.produto.controller.request.LocalRequest
+import com.api.produto.controller.request.VendaDepositoRequest
 import com.api.produto.exceptions.EntityResponseException
 import com.api.produto.mapper.ProdutoMapper
 import com.api.produto.model.Deposito
@@ -18,6 +19,7 @@ import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
+import io.mockk.verify
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
@@ -109,6 +111,14 @@ class DepositoServiceTest {
         assertTrue( depositoSave.depositos.any{ it.produtoCodigo == produto.codigo})
         assertEquals( 3, depositoSave.depositos.size)
         assertEquals( 300,produto.estoque.estoqueAtual)
+
+        every {
+            estoqueRepository.findById(produto.estoque.id)
+            estoqueRepository.save(produto.estoque)
+            depositoRespository.save(any())
+            produtoRepository.findById(produto.codigo)
+            produtoRepository.save(produto)
+        }
     }
 
     @Test
@@ -125,14 +135,19 @@ class DepositoServiceTest {
 
         every { produtoRepository.findById(produto.codigo) } returns Optional.of(produto)
         every { depositoRespository.findByIdAndProdutoCodigo(deposito1.id, produto.codigo) } returns Optional.of(deposito1)
-        every { estoqueRepository.findById(produto.estoque.id) } returns Optional.of(produto.estoque)
         every { estoqueRepository.save(any()) } returns produto.estoque
-        every { depositoRespository.findById(deposito1.id) } returns Optional.of(deposito1)
         every { depositoRespository.save(deposito1) } returns deposito1
 
         var depositoSave = depositoService.atualizaSaldo(depositoRequest)
 
         assertEquals(123, depositoSave.estoqueAtual)
+
+        verify {
+            produtoRepository.findById(produto.codigo)
+            depositoRespository.findByIdAndProdutoCodigo(deposito1.id, produto.codigo)
+            estoqueRepository.save(any())
+            depositoRespository.save(deposito1)
+        }
 
     }
 
@@ -169,7 +184,7 @@ class DepositoServiceTest {
     fun `test atualiza local deposito`(){
 
         var deposito = Deposito(1L, 0, Local(1), "7050")
-        var depositoLocalRequest = DepositoLocalRequest(1L,"6000", 2L)
+        var depositoLocalRequest = DepositoLocalRequest(1L,"6000", 3L)
 
         every { localRepository.findById(3L) } returns Optional.of(Local(3L))
         every { depositoRespository.findByIdAndProdutoCodigo(deposito.id,depositoLocalRequest.codigoProduto) } returns Optional.of(deposito)
@@ -178,6 +193,12 @@ class DepositoServiceTest {
         assertTrue( deposito.local.id == 1L)
         var depositoSave = depositoService.atualizaLocal(depositoLocalRequest)
         assertTrue( depositoSave.local.id == 3L)
+
+        verify {
+            localRepository.findById(3L)
+            depositoRespository.findByIdAndProdutoCodigo(deposito.id,depositoLocalRequest.codigoProduto)
+            depositoRespository.save(deposito)
+        }
 
     }
 
@@ -194,6 +215,14 @@ class DepositoServiceTest {
         every { depositoRespository.deleteById(deposito.id) } returns Unit
 
         assertTrue( depositoService.deleteDeposito(deposito.id,deposito.produtoCodigo!!) != null)
+
+        verify {
+            depositoRespository.findAllByProdutoCodigo( produto.codigo)
+            produtoRepository.findById(produto.codigo)
+            depositoRespository.findByIdAndProdutoCodigo(deposito.id, produto.codigo)
+            estoqueRepository.save(produto.estoque)
+            depositoRespository.deleteById(deposito.id)
+        }
 
     }
 
@@ -219,5 +248,65 @@ class DepositoServiceTest {
 
         assertThrows<EntityResponseException> {  depositoService.deleteDeposito(deposito.id, deposito.produtoCodigo!!)}
 
+        verify {
+            depositoRespository.findAllByProdutoCodigo( "8000")
+            depositoRespository.findByIdAndProdutoCodigo(deposito.id, deposito.produtoCodigo!!)
+        }
+
+    }
+
+    @Test
+    fun `test decrementar saldo deposito`(){
+
+        var produto = ProdutoBuild.produto("7050")
+        var deposito1 = Deposito(1L, 20, Local(1),produto.codigo)
+        var deposito2 = Deposito(2L, 30, Local(1),produto.codigo)
+        produto.estoque.reserva = 3
+        produto.estoque.depositos = mutableListOf(
+                deposito1,
+                deposito2)
+        var venda = VendaDepositoRequest(1L,produto.codigo, 3)
+
+        every { produtoRepository.findById(produto.codigo) } returns Optional.of(produto)
+        every { depositoRespository.findByIdAndProdutoCodigo(deposito1.id, produto.codigo) } returns Optional.of(deposito1)
+        every { estoqueRepository.save(any()) } returns produto.estoque
+        every { depositoRespository.save(deposito1) } returns deposito1
+
+        var novoEstoque = depositoService.decrementarSaldo(venda)
+
+        verify {
+            produtoRepository.findById(produto.codigo)
+            depositoRespository.findByIdAndProdutoCodigo(deposito1.id, produto.codigo)
+            estoqueRepository.save(any())
+            depositoRespository.save(deposito1)
+        }
+
+        assertEquals(47, novoEstoque.estoqueAtual)
+        assertEquals(17, novoEstoque.depositos.first().saldo)
+        assertEquals(0, novoEstoque.reserva)
+
+    }
+
+    @Test
+    fun `test decrementar saldo deposito invalido`(){
+
+
+        var venda = VendaDepositoRequest(3L, "30000", 3)
+
+        every { depositoRespository.findByIdAndProdutoCodigo(venda.idDepostito, venda.codigoProduto) } returns Optional.empty()
+
+        assertThrows<EntityResponseException> {  depositoService.decrementarSaldo(venda)}
+    }
+
+    @Test
+    fun `test decrementar saldo deposito produto invalido`(){
+
+        var venda = VendaDepositoRequest(1L, "3000", 3)
+        var deposito = Deposito(1L, 20, Local(1),venda.codigoProduto)
+
+        every { depositoRespository.findByIdAndProdutoCodigo(deposito.id, venda.codigoProduto) } returns Optional.of(deposito)
+        every { produtoRepository.findById( venda.codigoProduto) } returns Optional.empty()
+
+        assertThrows<EntityResponseException> {  depositoService.decrementarSaldo(venda)}
     }
 }

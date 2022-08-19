@@ -1,15 +1,14 @@
 package com.api.produto.controller.request
 
-import javax.validation.Valid
+import javax.validation.constraints.Min
 import javax.validation.constraints.NotBlank
-import javax.validation.constraints.NotNull
 import javax.validation.constraints.Positive
 
-class DepositoLocalRequest(
+class VendaDepositoRequest(
         @field:Positive
-        var id: Long,
+        var idDepostito: Long,
         @field:NotBlank
         var codigoProduto: String,
-        @field:Positive
-        var localID: Long
-)
+        @field:Min(1)
+        var quantidade: Int
+        )

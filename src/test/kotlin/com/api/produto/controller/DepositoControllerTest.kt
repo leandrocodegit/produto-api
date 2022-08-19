@@ -4,6 +4,7 @@ import com.api.produto.build.*
 import com.api.produto.controller.request.DepositoLocalRequest
 import com.api.produto.controller.request.DepositoRequest
 import com.api.produto.controller.request.LocalRequest
+import com.api.produto.controller.request.VendaDepositoRequest
 import com.api.produto.model.Deposito
 import com.api.produto.model.Local
 import com.api.produto.model.Produto

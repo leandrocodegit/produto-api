@@ -12,6 +12,7 @@ import com.api.produto.repository.ImageRepository
 import com.api.produto.repository.ImageStore
 import com.api.produto.service.ImageStoreService
 import com.api.produto.service.ProdutoService
+import io.swagger.annotations.Api
 import org.springframework.content.commons.annotations.MimeType
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -24,6 +25,7 @@ import kotlin.io.path.Path
 
 @RestController
 @RequestMapping("/api/v1/produto")
+@Api(tags= ["Endpoints produtos"], description = ":")
 class ProdutoController(
         private val produtoService: ProdutoService,
         private val mapper: ProdutoMapper,
@@ -51,11 +53,6 @@ class ProdutoController(
     @DeleteMapping("/{codigo}")
     fun deleteProduto(@PathVariable codigo: String) = ResponseEntity.ok(produtoService.deleteProduto(codigo))
 
-    @PostMapping("/venda")
-    fun vendaProduto(@RequestBody @Valid vendaRequest: VendaRequest) = ResponseEntity.ok(produtoService.vendaProduto(
-            vendaRequest.codigo,
-            vendaRequest.quantidade
-    ))
 
     @PostMapping
     fun createProduto(@RequestBody @Valid produtoRequest: ProdutoRequest): ResponseEntity<ProdutoResponse> {
